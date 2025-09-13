@@ -66,8 +66,8 @@ if __name__ == "__main__":
     n_ch = int(inlet.info().channel_count())
 
     # Parameters
-    TOTAL_DURATION = 180.0      # seconds to run live plot
-    SHIFT_SEC      = 0.05
+    TOTAL_DURATION = 480.0      # seconds to run live plot
+    SHIFT_SEC      = 0.01
     WIN_SEC        = 1.0
     SHIFT_SAMPLES  = int(SHIFT_SEC * fs)
     WIN_SAMPLES    = int(WIN_SEC * fs)
@@ -130,6 +130,7 @@ if __name__ == "__main__":
 
     # 3) Final FFT on all collected data
     eeg = np.vstack(all_data)
+    np.save('raw.npy', eeg)
     N = eeg.shape[0]
     freqs = np.fft.rfftfreq(N, 1/fs)
     fftv  = np.abs(np.fft.rfft(eeg, axis=0)) / N
