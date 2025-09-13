@@ -1,13 +1,24 @@
 #!/usr/bin/env python3
 """
-Simple setup script for the activity detection pipeline.
+Setup script for Suno AI Music Generation Pipeline.
+
+This script sets up the complete Suno AI system including:
+- Activity detection using computer vision
+- AI-powered music generation
+- Integrated contextual music recommendations
+- Command-line interfaces for all functionality
 
 Usage:
 1. Install dependencies: pip install -r requirements.txt
 2. Set your ANTHROPIC_API_KEY environment variable
-3. Run: python activity_detector.py
-"""
+3. Run: python main.py [mode] [options]
 
+Available modes:
+- generate: Generate music with custom parameters
+- activity: Generate music based on detected activity
+- integrated: Combined activity detection + music generation
+- interactive: Guided music generation
+"""
 import os
 import sys
 
@@ -55,16 +66,36 @@ def check_camera():
         print(f"❌ Camera error: {e}")
         return False
 
+def check_suno_modules():
+    """Check if Suno AI modules are available"""
+    try:
+        from suno.suno_ai import SunoAIPipeline
+        from suno.suno_cli import setup_argument_parser
+        print("✅ Suno AI modules are available")
+        return True
+    except ImportError as e:
+        print(f"❌ Missing Suno AI module: {e}")
+        return False
+
 if __name__ == "__main__":
-    print("🔍 Checking system requirements...")
+    print("🔍 Checking Suno AI system requirements...")
     
     deps_ok = check_dependencies()
     api_ok = check_api_key()
     camera_ok = check_camera()
+    suno_ok = check_suno_modules()
     
-    if deps_ok and api_ok and camera_ok:
+    if deps_ok and api_ok and camera_ok and suno_ok:
         print("\n🎉 Everything looks good! You can run:")
-        print("python activity_detector.py")
+        print("🎵 Music Generation:")
+        print("  python main.py generate --genre pop --mood upbeat")
+        print("🎯 Activity-based Music:")
+        print("  python main.py activity --activity 'working out'")
+        print("🔄 Integrated Mode:")
+        print("  python main.py integrated --monitor")
+        print("🎮 Interactive Mode:")
+        print("  python main.py interactive")
+        print("\n📚 For help: python main.py --help")
     else:
-        print("\n⚠️  Please fix the issues above before running the pipeline.")
+        print("\n⚠️  Please fix the issues above before running Suno AI.")
         sys.exit(1)
