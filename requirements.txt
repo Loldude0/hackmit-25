@@ -1,0 +1,6 @@
+opencv-python==4.8.1.78
+langgraph==0.2.5
+langchain==0.2.11
+langchain-anthropic==0.1.20
+pydantic==2.8.2
+python-dotenv==1.0.0
