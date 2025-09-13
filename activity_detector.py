@@ -15,27 +15,14 @@ from langchain_core.messages import HumanMessage
 load_dotenv()
 
 # Pydantic Models
-class ActivityAnalysis(BaseModel):
-    activity: str = Field(..., description="Simple description of what the user is doing")
-    confidence: float = Field(..., description="Confidence score 0-1")
-    scene_description: str = Field(..., description="Brief description of what's visible")
-
-class ActivityChangeDetection(BaseModel):
-    current_activity: str
-    previous_activity: Optional[str] = None
-    significant_change: bool = Field(..., description="Whether there's been a significant change in activity")
-    change_description: Optional[str] = Field(None, description="Description of the change if any")
+class LLMResponse(BaseModel):
+    activity: str = Field(..., description="Small phrase describing what the user is doing (e.g., 'gyming', 'programming', 'watching a sad movie')")
+    keywords: List[str] = Field(..., description="Keywords for song recommendation based on the activity and mood")
+    change: bool = Field(..., description="Whether the activity has changed from the previous activities in memory")
 
 class MemoryState(BaseModel):
-    activities: List[Dict[str, Any]] = Field(default_factory=list)
-    summary: Optional[str] = None
+    activities: List[str] = Field(default_factory=list)  # List of last 15 activities
     last_updated: Optional[datetime] = None
-
-class PipelineState(BaseModel):
-    image_data: Optional[str] = None
-    current_analysis: Optional[ActivityAnalysis] = None
-    memory: MemoryState = Field(default_factory=MemoryState)
-    change_detection: Optional[ActivityChangeDetection] = None
     
 class ActivityDetectionPipeline:
     def __init__(self, api_key: str):
@@ -52,48 +39,43 @@ class ActivityDetectionPipeline:
         # Create the state graph
         workflow = StateGraph(dict)
         
-        # Add nodes
-        workflow.add_node("analyze_vision", self._analyze_vision)
-        workflow.add_node("update_memory", self._update_memory)
-        workflow.add_node("detect_changes", self._detect_changes)
+        # Single node that does everything
+        workflow.add_node("analyze_and_update", self._analyze_and_update)
         
-        # Define the flow
-        workflow.set_entry_point("analyze_vision")
-        workflow.add_edge("analyze_vision", "update_memory")
-        
-        # Conditional edge: only detect changes if we have memory
-        workflow.add_conditional_edges(
-            "update_memory",
-            self._should_detect_changes,
-            {
-                "detect_changes": "detect_changes",
-                "end": END
-            }
-        )
-        workflow.add_edge("detect_changes", END)
+        # Simple linear flow
+        workflow.set_entry_point("analyze_and_update")
+        workflow.add_edge("analyze_and_update", END)
         
         return workflow.compile()
     
-    def _should_detect_changes(self, state: Dict) -> str:
-        memory = MemoryState(**state.get("memory", {}))
-        return "detect_changes" if len(memory.activities) > 1 else "end"
-    
-    def _analyze_vision(self, state: Dict) -> Dict:
-        """Analyze the current image to determine activity"""
+    def _analyze_and_update(self, state: Dict) -> Dict:
+        """Single node that analyzes image and updates memory"""
         image_data = state.get("image_data")
+        memory_data = state.get("memory", {})
+        memory = MemoryState(**memory_data)
+        
+        # Build context with previous activities if they exist
+        context_text = "Analyze this image and determine what activity the person is doing."
+        if memory.activities:
+            recent_activities = memory.activities[-5:]  # Show last 5 activities for context
+            context_text += f"\n\nPrevious activities in memory: {recent_activities}"
+            context_text += "\nDetermine if the current activity has changed significantly from the recent pattern."
+        
+        context_text += """
+        
+        Respond with a JSON object containing:
+        - activity: small phrase describing what the user is doing (e.g., "gyming", "programming", "watching a sad movie")
+        - keywords: list of strings that would be useful for song recommendations based on this activity and mood
+        - change: boolean indicating whether the activity has changed from the previous activities in memory
+        
+        Focus on activities that are relevant for music recommendations. Keywords should capture mood, energy level, and context.
+        """
         
         messages = [
             HumanMessage(content=[
                 {
                     "type": "text",
-                    "text": """Analyze this image and determine what activity the person is doing. 
-                    Focus on simple activities that could be relevant for music recommendations.
-                    Respond with a JSON object containing:
-                    - activity: simple description (e.g., "working", "cooking", "relaxing", "exercising")
-                    - confidence: score from 0-1
-                    - scene_description: brief description of what's visible
-                    
-                    Keep activity descriptions simple and music-context relevant."""
+                    "text": context_text
                 },
                 {
                     "type": "image",
@@ -108,74 +90,40 @@ class ActivityDetectionPipeline:
         
         response = self.llm.invoke(messages)
         
-        # Parse the response (simplified - in production you'd want better error handling)
+        # Parse the response
         try:
             import json
-            analysis_data = json.loads(response.content)
-            analysis = ActivityAnalysis(**analysis_data)
+            llm_data = json.loads(response.content)
+            llm_response = LLMResponse(**llm_data)
         except:
             # Fallback if JSON parsing fails
-            analysis = ActivityAnalysis(
+            llm_response = LLMResponse(
                 activity="unknown",
-                confidence=0.1,
-                scene_description="Could not analyze image clearly"
+                keywords=["ambient", "neutral"],
+                change=False
             )
         
-        state["current_analysis"] = analysis.dict()
-        return state
-    
-    def _update_memory(self, state: Dict) -> Dict:
-        """Update memory with current analysis"""
-        current_analysis = state.get("current_analysis")
-        memory_data = state.get("memory", {})
-        memory = MemoryState(**memory_data)
+        # Update memory based on change detection
+        if llm_response.change or len(memory.activities) == 0:
+            # Add new activity
+            memory.activities.append(llm_response.activity)
+        else:
+            # Append same activity as before
+            if memory.activities:
+                memory.activities.append(memory.activities[-1])
+            else:
+                memory.activities.append(llm_response.activity)
         
-        # Add current analysis to memory
-        if current_analysis:
-            memory.activities.append({
-                "timestamp": datetime.now().isoformat(),
-                "analysis": current_analysis
-            })
-            
-            # Keep only last 2-3 minutes of activities (assuming 15s intervals = ~12 entries)
-            if len(memory.activities) > 12:
-                memory.activities = memory.activities[-12:]
-            
-            # Update summary (simplified)
-            if len(memory.activities) >= 3:
-                recent_activities = [a["analysis"]["activity"] for a in memory.activities[-3:]]
-                memory.summary = f"Recent activities: {', '.join(recent_activities)}"
-            
-            memory.last_updated = datetime.now()
+        # Keep only last 15 activities
+        if len(memory.activities) > 15:
+            memory.activities = memory.activities[-15:]
         
+        memory.last_updated = datetime.now()
+        
+        # Update state
+        state["llm_response"] = llm_response.dict()
         state["memory"] = memory.dict()
-        return state
-    
-    def _detect_changes(self, state: Dict) -> Dict:
-        """Detect significant changes in activity"""
-        current_analysis = ActivityAnalysis(**state.get("current_analysis", {}))
-        memory_data = state.get("memory", {})
-        memory = MemoryState(**memory_data)
         
-        if len(memory.activities) < 2:
-            state["change_detection"] = None
-            return state
-        
-        # Get previous activity
-        previous_activity = memory.activities[-2]["analysis"]["activity"]
-        current_activity = current_analysis.activity
-        
-        # Simple change detection (you could make this more sophisticated)
-        significant_change = previous_activity != current_activity
-        
-        change_detection = ActivityChangeDetection(
-            current_activity=current_activity,
-            previous_activity=previous_activity,
-            significant_change=significant_change,
-            change_description=f"Changed from {previous_activity} to {current_activity}" if significant_change else None
-        )
-        
-        state["change_detection"] = change_detection.dict()
         return state
     
     def _capture_frame(self):
@@ -204,8 +152,7 @@ class ActivityDetectionPipeline:
         initial_state = {
             "image_data": image_data,
             "memory": self.memory.dict(),
-            "current_analysis": None,
-            "change_detection": None
+            "llm_response": None
         }
         
         # Run the pipeline (LangGraph handles concurrency internally)
@@ -214,10 +161,13 @@ class ActivityDetectionPipeline:
         # Update persistent memory
         self.memory = MemoryState(**result.get("memory", {}))
         
+        # Extract LLM response
+        llm_response = result.get("llm_response", {})
+        
         return {
-            "activity": result.get("current_analysis", {}).get("activity", "unknown"),
-            "change_detected": result.get("change_detection", {}).get("significant_change", False) if result.get("change_detection") else False,
-            "scene_description": result.get("current_analysis", {}).get("scene_description", "")
+            "activity": llm_response.get("activity", "unknown"),
+            "keywords": llm_response.get("keywords", []),
+            "change": llm_response.get("change", False)
         }
     
     def run_continuous(self, interval_seconds=15):
@@ -233,9 +183,10 @@ class ActivityDetectionPipeline:
                 
                 if result:
                     print(f"Activity: {result['activity']}")
-                    print(f"Scene: {result['scene_description']}")
-                    if result['change_detected']:
-                        print("🔄 Significant activity change detected!")
+                    print(f"Keywords: {', '.join(result['keywords'])}")
+                    if result['change']:
+                        print("🔄 Activity change detected!")
+                    print(f"Memory: {self.memory.activities[-5:] if len(self.memory.activities) > 0 else 'Empty'}")
                     
                 time.sleep(interval_seconds)
                 
