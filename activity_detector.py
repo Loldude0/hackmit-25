@@ -30,7 +30,7 @@ class ActivityDetectionPipeline:
             model="claude-3-5-sonnet-20241022",
             anthropic_api_key=api_key,
             max_tokens=1000
-        )
+        ).with_structured_output(LLMResponse)
         self.camera = None
         self.memory = MemoryState()  # Persistent memory across frames
         self.graph = self._build_graph()
@@ -63,12 +63,19 @@ class ActivityDetectionPipeline:
         
         context_text += """
         
-        Respond with a JSON object containing:
-        - activity: small phrase describing what the user is doing (e.g., "gyming", "programming", "watching a sad movie")
-        - keywords: list of strings that would be useful for song recommendations based on this activity and mood
-        - change: boolean indicating whether the activity has changed from the previous activities in memory
+        You must respond with a structured JSON object with exactly these fields:
+        - activity: string - small phrase describing what the user is doing (e.g., "gyming", "programming", "watching a sad movie")
+        - keywords: array of strings - keywords for song recommendations based on this activity and mood
+        - change: boolean - whether the activity has changed from the previous activities in memory
         
         Focus on activities that are relevant for music recommendations. Keywords should capture mood, energy level, and context.
+        
+        JSON Schema:
+        {
+            "activity": "string",
+            "keywords": ["string", "string", ...],
+            "change": boolean
+        }
         """
         
         messages = [
@@ -88,20 +95,19 @@ class ActivityDetectionPipeline:
             ])
         ]
         
-        response = self.llm.invoke(messages)
+        # Get structured response directly (no JSON parsing needed)
+        raw_response = self.llm.invoke(messages)
+        print(f"Raw structured response: {raw_response}")
+        print(f"Response type: {type(raw_response)}")
         
-        # Parse the response
-        try:
-            import json
-            llm_data = json.loads(response.content)
-            llm_response = LLMResponse(**llm_data)
-        except:
-            # Fallback if JSON parsing fails
-            llm_response = LLMResponse(
-                activity="unknown",
-                keywords=["ambient", "neutral"],
-                change=False
-            )
+        # Ensure we have a proper LLMResponse instance
+        if isinstance(raw_response, LLMResponse):
+            llm_response = raw_response
+        else:
+            # If it's a dict, convert to LLMResponse
+            llm_response = LLMResponse(**raw_response)
+        
+        print(f"Final LLM response: {llm_response}")
         
         # Update memory based on change detection
         if llm_response.change or len(memory.activities) == 0:
@@ -173,28 +179,79 @@ class ActivityDetectionPipeline:
     def run_continuous(self, interval_seconds=15):
         """Run the pipeline continuously every interval_seconds"""
         print(f"Starting activity detection pipeline (every {interval_seconds} seconds)")
-        print("Press Ctrl+C to stop")
+        print("Press 'q' to quit or Ctrl+C to stop")
+        
+        # Initialize camera once
+        if self.camera is None:
+            self.camera = cv2.VideoCapture(0)
+            
+        if not self.camera.isOpened():
+            print("Error: Could not open webcam")
+            return
+        
+        last_analysis_time = time.time()
         
         try:
             while True:
-                print(f"\n[{datetime.now().strftime('%H:%M:%S')}] Processing frame...")
+                # Read frame continuously (keeps camera alive)
+                ret, frame = self.camera.read()
                 
-                result = self.process_frame()
+                if not ret:
+                    print("Error: Failed to capture frame")
+                    break
                 
-                if result:
-                    print(f"Activity: {result['activity']}")
-                    print(f"Keywords: {', '.join(result['keywords'])}")
-                    if result['change']:
+                # Show the camera view continuously
+                cv2.imshow('Camera View', frame)
+                
+                # Check if it's time to analyze
+                current_time = time.time()
+                if current_time - last_analysis_time >= interval_seconds:
+                    print(f"\n[{datetime.now().strftime('%H:%M:%S')}] Processing frame...")
+                    
+                    # # Save frame for debugging
+                    # timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                    # debug_filename = f"debug_frame_{timestamp}.jpg"
+                    # cv2.imwrite(debug_filename, frame)
+                    # print(f"Saved debug frame: {debug_filename}")
+                    
+                    # Convert current frame to base64 for analysis
+                    _, buffer = cv2.imencode('.jpg', frame)
+                    image_b64 = base64.b64encode(buffer).decode('utf-8')
+                    
+                    # Run analysis on this frame
+                    initial_state = {
+                        "image_data": image_b64,
+                        "memory": self.memory.dict(),
+                        "llm_response": None
+                    }
+                    
+                    result = self.graph.invoke(initial_state)
+                    self.memory = MemoryState(**result.get("memory", {}))
+                    llm_response = result.get("llm_response", {})
+                    print("The LLM repsonse is: ", llm_response)
+                    # Display results
+                    activity = llm_response.get("activity", "unknown")
+                    keywords = llm_response.get("keywords", [])
+                    change = llm_response.get("change", False)
+                    
+                    print(f"Activity: {activity}")
+                    print(f"Keywords: {', '.join(keywords)}")
+                    if change:
                         print("🔄 Activity change detected!")
                     print(f"Memory: {self.memory.activities[-5:] if len(self.memory.activities) > 0 else 'Empty'}")
                     
-                time.sleep(interval_seconds)
+                    last_analysis_time = current_time
+                
+                # Break loop if 'q' is pressed
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    break
                 
         except KeyboardInterrupt:
             print("\nStopping pipeline...")
         finally:
             if self.camera:
                 self.camera.release()
+            cv2.destroyAllWindows()
 
 # Main execution
 def main():
