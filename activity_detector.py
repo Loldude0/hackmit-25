@@ -17,7 +17,7 @@ load_dotenv()
 # Pydantic Models
 class LLMResponse(BaseModel):
     activity: str = Field(..., description="Small phrase describing what the user is doing (e.g., 'gyming', 'programming', 'watching a sad movie')")
-    keywords: List[str] = Field(..., description="Keywords for song recommendation based on the activity and mood")
+    rag_query: str = Field(..., description="RAG similarity search query to find songs matching the activity and mood")
     change: bool = Field(..., description="Whether the activity has changed from the previous activities in memory")
 
 class MemoryState(BaseModel):
@@ -65,15 +65,26 @@ class ActivityDetectionPipeline:
         
         You must respond with a structured JSON object with exactly these fields:
         - activity: string - small phrase describing what the user is doing (e.g., "gyming", "programming", "watching a sad movie")
-        - keywords: array of strings - keywords for song recommendations based on this activity and mood
+        - rag_query: string - a similarity search query to find songs matching this activity and mood
         - change: boolean - whether the activity has changed from the previous activities in memory
         
-        Focus on activities that are relevant for music recommendations. Keywords should capture mood, energy level, and context.
+        Create descriptive RAG queries that capture the mood and energy needed for the activity. Here are some examples:
+        
+        Examples:
+        - Activity: "working out" → RAG query: "high energy rap bass heavy confident uplifting workout music"
+        - Activity: "programming" → RAG query: "calm ambient lo-fi slow peaceful focus background music"
+        - Activity: "feeling romantic" → RAG query: "romantic cheesy love songs nostalgic playful duets"
+        - Activity: "studying" → RAG query: "instrumental peaceful ambient chill study background music"
+        - Activity: "driving" → RAG query: "upbeat catchy melodic road trip energetic music"
+        - Activity: "cooking" → RAG query: "fun uplifting happy background cooking music"
+        - Activity: "relaxing" → RAG query: "chill atmospheric calm soothing ambient music"
+        
+        Make your queries descriptive and specific to match the activity's vibe and energy level.
         
         JSON Schema:
         {
             "activity": "string",
-            "keywords": ["string", "string", ...],
+            "rag_query": "string",
             "change": boolean
         }
         """
@@ -172,7 +183,7 @@ class ActivityDetectionPipeline:
         
         return {
             "activity": llm_response.get("activity", "unknown"),
-            "keywords": llm_response.get("keywords", []),
+            "rag_query": llm_response.get("rag_query", ""),
             "change": llm_response.get("change", False)
         }
     
@@ -208,12 +219,6 @@ class ActivityDetectionPipeline:
                 if current_time - last_analysis_time >= interval_seconds:
                     print(f"\n[{datetime.now().strftime('%H:%M:%S')}] Processing frame...")
                     
-                    # # Save frame for debugging
-                    # timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-                    # debug_filename = f"debug_frame_{timestamp}.jpg"
-                    # cv2.imwrite(debug_filename, frame)
-                    # print(f"Saved debug frame: {debug_filename}")
-                    
                     # Convert current frame to base64 for analysis
                     _, buffer = cv2.imencode('.jpg', frame)
                     image_b64 = base64.b64encode(buffer).decode('utf-8')
@@ -231,11 +236,11 @@ class ActivityDetectionPipeline:
                     print("The LLM repsonse is: ", llm_response)
                     # Display results
                     activity = llm_response.get("activity", "unknown")
-                    keywords = llm_response.get("keywords", [])
+                    rag_query = llm_response.get("rag_query", "")
                     change = llm_response.get("change", False)
                     
                     print(f"Activity: {activity}")
-                    print(f"Keywords: {', '.join(keywords)}")
+                    print(f"RAG Query: {rag_query}")
                     if change:
                         print("🔄 Activity change detected!")
                     print(f"Memory: {self.memory.activities[-5:] if len(self.memory.activities) > 0 else 'Empty'}")
