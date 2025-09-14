@@ -156,6 +156,17 @@ def main():
                     # Display day memory prominently
                     if day_memory_updated:
                         print("📖 Day Memory Updated!")
+                        # Save day memory to file when updated
+                        try:
+                            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                            with open("day_memory.txt", "w", encoding="utf-8") as f:
+                                f.write(f"=== Day Memory - Last Updated: {timestamp} ===\n\n")
+                                f.write(day_memory)
+                                f.write(f"\n\n=== End of Day Memory ===\n")
+                            print("💾 Day memory saved to day_memory.txt")
+                        except Exception as e:
+                            print(f"⚠️ Warning: Could not save day memory to file: {e}")
+                    
                     if day_memory:
                         print(f"📚 Today's Story: {day_memory}")
                         print("-" * 60)

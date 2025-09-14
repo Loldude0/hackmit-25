@@ -104,28 +104,32 @@ class ActivityDetectionPipeline:
         """
         
         # Prepare day memory update prompt
-        day_memory_context = f"""Analyze this image and update the narrative of the user's day. This narrative will be used to generate a personalized song about their day.
+        day_memory_context = f"""Analyze this image and update the narrative of the user's day.
 
 Current day memory: "{memory.day_memory}"
+As you track the person's day, record the scene in detail. Include:
 
-Look at what the person is doing right now and consider:
-1. Does this add something NEW and SIGNIFICANT to their day's story?
-2. What emotions, activities, or moments would make for good song lyrics?
-3. Focus on the journey, feelings, and meaningful moments of their day
+- What they're doing right now
+- Where they are
+- What they're wearing (clothes, colors, styles)
+- Who they're with (if anyone)
+- How they're feeling
+- Small actions, objects, or details in the moment
 
-IMPORTANT: If what you see is already well-reflected in the current day memory, don't change it much. Only update if there's something genuinely new or significant happening that adds to the day's narrative.
+Then consider:
+- Does this add something new or meaningful to today's story?
+- How does this fit into the flow of their day — the arc, transitions, and emotions?
 
-Create a flowing, song-worthy narrative that captures:
-- Key activities and transitions throughout the day
-- Emotional moments and feelings
-- The overall arc and vibe of their day
-- Things that would make for compelling song lyrics
-
-Keep it concise but emotionally resonant. Think like you're writing the story that will become a personalized song about their day.
+Write it as a flowing narrative that:
+- Captures key events and little details
+- Highlights emotions and shifts in mood
+- Keeps it vivid and real
+- Focuses on meaningful moments without filler or exaggeration
+- Do not add literary flair, keep it simple and real.
 
 JSON Schema:
 {{
-    "day_memory": "string - updated narrative of the user's entire day",
+    "day_memory": "string - updated narrative of the user's entire day (songwriter's notes)",
     "significant_update": "boolean - whether this observation adds something significant to the day's story"
 }}
 """
