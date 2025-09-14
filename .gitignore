@@ -5,3 +5,4 @@ suno/generated_music/
 *.mp3
 *.wav
 *.mid
+node_modules
