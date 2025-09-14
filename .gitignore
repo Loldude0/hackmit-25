@@ -7,3 +7,4 @@ suno/generated_music/
 *.mid
 node_modules
 songs/songfiles
+__pycache__/

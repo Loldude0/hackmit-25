@@ -20,17 +20,31 @@ class LLMResponse(BaseModel):
     rag_query: str = Field(..., description="RAG similarity search query to find songs matching the activity and mood")
     change: bool = Field(..., description="Whether the activity has changed from the previous activities in memory")
 
+class DayMemoryResponse(BaseModel):
+    day_memory: str = Field(..., description="Narrative description of the user's day suitable for song generation")
+    significant_update: bool = Field(..., description="Whether this observation adds something significant to the day's story")
+
 class MemoryState(BaseModel):
     activities: List[str] = Field(default_factory=list)  # List of last 15 activities
+    day_memory: str = Field(default="", description="Cumulative narrative of the user's entire day")
     last_updated: Optional[datetime] = None
     
 class ActivityDetectionPipeline:
     def __init__(self, api_key: str):
-        self.llm = ChatAnthropic(
+        # Activity detection LLM
+        self.activity_llm = ChatAnthropic(
             model="claude-3-5-sonnet-20241022",
             anthropic_api_key=api_key,
             max_tokens=1000
         ).with_structured_output(LLMResponse)
+        
+        # Day memory LLM  
+        self.day_memory_llm = ChatAnthropic(
+            model="claude-3-5-sonnet-20241022",
+            anthropic_api_key=api_key,
+            max_tokens=800
+        ).with_structured_output(DayMemoryResponse)
+        
         self.camera = None
         self.memory = MemoryState()  # Persistent memory across frames
         self.graph = self._build_graph()
@@ -49,19 +63,19 @@ class ActivityDetectionPipeline:
         return workflow.compile()
     
     def _analyze_and_update(self, state: Dict) -> Dict:
-        """Single node that analyzes image and updates memory"""
+        """Single node that analyzes image and updates memory with parallel LLM calls"""
         image_data = state.get("image_data")
         memory_data = state.get("memory", {})
         memory = MemoryState(**memory_data)
         
-        # Build context with previous activities if they exist
-        context_text = "Analyze this image and determine what activity the person is doing."
+        # Prepare activity detection prompt
+        activity_context = "Analyze this image and determine what activity the person is doing."
         if memory.activities:
             recent_activities = memory.activities[-5:]  # Show last 5 activities for context
-            context_text += f"\n\nPrevious activities in memory: {recent_activities}"
-            context_text += "\nDetermine if the current activity has changed significantly from the recent pattern."
+            activity_context += f"\n\nPrevious activities in memory: {recent_activities}"
+            activity_context += "\n\nIMPORTANT: The user's activity may have genuinely changed! Don't assume consistency - look carefully at what the person is ACTUALLY doing right now in the image. Compare the current visual evidence to the previous activities and determine if there's a real change. People naturally switch between different activities throughout the day (working → exercising → relaxing → eating, etc.)."
         
-        context_text += """
+        activity_context += """
         
         You must respond with a structured JSON object with exactly these fields:
         - activity: string - small phrase describing what the user is doing (e.g., "gyming", "programming", "watching a sad movie")
@@ -89,43 +103,76 @@ class ActivityDetectionPipeline:
         }
         """
         
-        messages = [
+        # Prepare day memory update prompt
+        day_memory_context = f"""Analyze this image and update the narrative of the user's day. This narrative will be used to generate a personalized song about their day.
+
+Current day memory: "{memory.day_memory}"
+
+Look at what the person is doing right now and consider:
+1. Does this add something NEW and SIGNIFICANT to their day's story?
+2. What emotions, activities, or moments would make for good song lyrics?
+3. Focus on the journey, feelings, and meaningful moments of their day
+
+IMPORTANT: If what you see is already well-reflected in the current day memory, don't change it much. Only update if there's something genuinely new or significant happening that adds to the day's narrative.
+
+Create a flowing, song-worthy narrative that captures:
+- Key activities and transitions throughout the day
+- Emotional moments and feelings
+- The overall arc and vibe of their day
+- Things that would make for compelling song lyrics
+
+Keep it concise but emotionally resonant. Think like you're writing the story that will become a personalized song about their day.
+
+JSON Schema:
+{{
+    "day_memory": "string - updated narrative of the user's entire day",
+    "significant_update": "boolean - whether this observation adds something significant to the day's story"
+}}
+"""
+        
+        # Create messages for both LLM calls
+        activity_messages = [
             HumanMessage(content=[
-                {
-                    "type": "text",
-                    "text": context_text
-                },
-                {
-                    "type": "image",
-                    "source": {
-                        "type": "base64",
-                        "media_type": "image/jpeg",
-                        "data": image_data
-                    }
-                }
+                {"type": "text", "text": activity_context},
+                {"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": image_data}}
             ])
         ]
         
-        # Get structured response directly (no JSON parsing needed)
-        raw_response = self.llm.invoke(messages)
-        print(f"Raw structured response: {raw_response}")
-        print(f"Response type: {type(raw_response)}")
+        day_memory_messages = [
+            HumanMessage(content=[
+                {"type": "text", "text": day_memory_context},
+                {"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": image_data}}
+            ])
+        ]
         
-        # Ensure we have a proper LLMResponse instance
-        if isinstance(raw_response, LLMResponse):
-            llm_response = raw_response
+        # Run both LLM calls (using synchronous calls to avoid async issues)
+        print("Running parallel LLM analysis...")
+        
+        # Run activity detection
+        activity_response = self.activity_llm.invoke(activity_messages)
+        
+        # Run day memory update  
+        day_memory_response = self.day_memory_llm.invoke(day_memory_messages)
+        
+        # Process activity response
+        if isinstance(activity_response, LLMResponse):
+            llm_response = activity_response
         else:
-            # If it's a dict, convert to LLMResponse
-            llm_response = LLMResponse(**raw_response)
+            llm_response = LLMResponse(**activity_response)
         
-        print(f"Final LLM response: {llm_response}")
+        # Process day memory response  
+        if isinstance(day_memory_response, DayMemoryResponse):
+            day_memory_llm_response = day_memory_response
+        else:
+            day_memory_llm_response = DayMemoryResponse(**day_memory_response)
         
-        # Update memory based on change detection
+        print(f"Activity response: {llm_response}")
+        print(f"Day memory response: {day_memory_llm_response}")
+        
+        # Update activity memory
         if llm_response.change or len(memory.activities) == 0:
-            # Add new activity
             memory.activities.append(llm_response.activity)
         else:
-            # Append same activity as before
             if memory.activities:
                 memory.activities.append(memory.activities[-1])
             else:
@@ -135,10 +182,16 @@ class ActivityDetectionPipeline:
         if len(memory.activities) > 15:
             memory.activities = memory.activities[-15:]
         
+        # Update day memory if significant
+        if day_memory_llm_response.significant_update or not memory.day_memory:
+            memory.day_memory = day_memory_llm_response.day_memory
+            print(f"📖 Day memory updated: {memory.day_memory[:100]}...")
+        
         memory.last_updated = datetime.now()
         
         # Update state
         state["llm_response"] = llm_response.dict()
+        state["day_memory_response"] = day_memory_llm_response.dict()
         state["memory"] = memory.dict()
         
         return state
@@ -169,7 +222,8 @@ class ActivityDetectionPipeline:
         initial_state = {
             "image_data": image_data,
             "memory": self.memory.dict(),
-            "llm_response": None
+            "llm_response": None,
+            "day_memory_response": None
         }
         
         # Run the pipeline (LangGraph handles concurrency internally)
@@ -184,7 +238,9 @@ class ActivityDetectionPipeline:
         return {
             "activity": llm_response.get("activity", "unknown"),
             "rag_query": llm_response.get("rag_query", ""),
-            "change": llm_response.get("change", False)
+            "change": llm_response.get("change", False),
+            "day_memory": self.memory.day_memory,
+            "day_memory_updated": result.get("day_memory_response", {}).get("significant_update", False)
         }
     
     def run_continuous(self, interval_seconds=15):
@@ -227,23 +283,33 @@ class ActivityDetectionPipeline:
                     initial_state = {
                         "image_data": image_b64,
                         "memory": self.memory.dict(),
-                        "llm_response": None
+                        "llm_response": None,
+                        "day_memory_response": None
                     }
                     
                     result = self.graph.invoke(initial_state)
                     self.memory = MemoryState(**result.get("memory", {}))
                     llm_response = result.get("llm_response", {})
-                    print("The LLM repsonse is: ", llm_response)
+                    day_memory_response = result.get("day_memory_response", {})
+                    
+                    print("The LLM response is: ", llm_response)
                     # Display results
                     activity = llm_response.get("activity", "unknown")
                     rag_query = llm_response.get("rag_query", "")
                     change = llm_response.get("change", False)
                     
-                    print(f"Activity: {activity}")
-                    print(f"RAG Query: {rag_query}")
+                    print(f"🎯 Activity: {activity}")
+                    print(f"🔍 RAG Query: {rag_query}")
                     if change:
                         print("🔄 Activity change detected!")
-                    print(f"Memory: {self.memory.activities[-5:] if len(self.memory.activities) > 0 else 'Empty'}")
+                    
+                    # Display day memory info
+                    day_memory_updated = day_memory_response.get("significant_update", False)
+                    if day_memory_updated:
+                        print("📖 Day memory updated!")
+                    print(f"📚 Day Story: {self.memory.day_memory[:150]}{'...' if len(self.memory.day_memory) > 150 else ''}")
+                    
+                    print(f"🧠 Recent Activities: {self.memory.activities[-5:] if len(self.memory.activities) > 0 else 'Empty'}")
                     
                     last_analysis_time = current_time
                 
@@ -257,6 +323,10 @@ class ActivityDetectionPipeline:
             if self.camera:
                 self.camera.release()
             cv2.destroyAllWindows()
+    
+    def get_day_memory(self):
+        """Get the current day memory for song generation"""
+        return self.memory.day_memory if self.memory.day_memory else "No significant activities recorded yet today."
 
 # Main execution
 def main():
