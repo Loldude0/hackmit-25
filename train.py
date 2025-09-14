@@ -104,8 +104,8 @@ def train():
                 self.reduction = reduction
                 self.ce = nn.CrossEntropyLoss(weight=alpha, reduction='none')
             def forward(self, logits, target):
-                ce = self.ce(logits, target)              # (N,)
-                pt = torch.exp(-ce).clamp_min(1e-8)       # (N,)
+                ce = self.ce(logits, target)       
+                pt = torch.exp(-ce).clamp_min(1e-8)
                 loss = ((1 - pt) ** self.gamma) * ce
                 if self.reduction == 'mean':
                     return loss.mean()
