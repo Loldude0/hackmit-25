@@ -1,6 +1,14 @@
-opencv-python==4.8.1.78
 langgraph==0.2.5
 langchain==0.2.11
 langchain-anthropic==0.1.20
 pydantic==2.8.2
 python-dotenv==1.0.0
+selenium==4.25.0
+beautifulsoup4==4.12.2
+requests==2.31.0
+pinecone==7.0.1
+requests
+opencv-python==4.8.1.78
+mido
+pygame
+numpy
