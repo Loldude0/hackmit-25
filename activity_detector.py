@@ -69,7 +69,7 @@ class ActivityDetectionPipeline:
         memory = MemoryState(**memory_data)
         
         # Prepare activity detection prompt
-        activity_context = "Analyze this image and determine what activity the person is doing."
+        activity_context = "Analyze this image and determine what activity the person is doing. This is the view of what the user is seeing through their eyes"
         if memory.activities:
             recent_activities = memory.activities[-5:]  # Show last 5 activities for context
             activity_context += f"\n\nPrevious activities in memory: {recent_activities}"
@@ -85,13 +85,11 @@ class ActivityDetectionPipeline:
         Create descriptive RAG queries that capture the mood and energy needed for the activity. Here are some examples:
         
         Examples:
-        - Activity: "working out" → RAG query: "high energy rap bass heavy confident uplifting workout music"
+        - Activity: "working out" → RAG query: "high energy rap bass heavy metal music"
         - Activity: "programming" → RAG query: "calm ambient lo-fi slow peaceful focus background music"
         - Activity: "feeling romantic" → RAG query: "romantic cheesy love songs nostalgic playful duets"
         - Activity: "studying" → RAG query: "instrumental peaceful ambient chill study background music"
-        - Activity: "driving" → RAG query: "upbeat catchy melodic road trip energetic music"
-        - Activity: "cooking" → RAG query: "fun uplifting happy background cooking music"
-        - Activity: "relaxing" → RAG query: "chill atmospheric calm soothing ambient music"
+        - Activity: "watching sports" → RAG query: "rap, dubstep trap music intense aggresive"
         
         Make your queries descriptive and specific to match the activity's vibe and energy level.
         
@@ -107,7 +105,7 @@ class ActivityDetectionPipeline:
         day_memory_context = f"""Analyze this image and update the narrative of the user's day.
 
 Current day memory: "{memory.day_memory}"
-As you track the person's day, record the scene in detail. Include:
+As you track the person's day, record the scene in detail. This is the view of what the user is seeing through their eyes. Include:
 
 - What they're doing right now
 - Where they are
