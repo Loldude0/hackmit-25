@@ -49,7 +49,7 @@ class MusicPlayer:
         if not song_path:
             return False
         
-        return self.play_from_path(song_path, start_time=10.0)
+        return self.play_from_path(song_path, start_time=30.0)
     
     def play_from_path(self, file_path, start_time=0.0):
         """Play a song from a specific file path"""
