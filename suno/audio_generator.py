@@ -12,14 +12,14 @@ from typing import Dict, Any, List
 from datetime import datetime
 
 try:
-    import mido
-    from mido import MidiFile, MidiTrack, Message
+    import mido # type: ignore
+    from mido import MidiFile, MidiTrack, Message # type: ignore
     MIDI_AVAILABLE = True
 except ImportError:
     MIDI_AVAILABLE = False
 
 try:
-    import pygame
+    import pygame # type: ignore
     PYGAME_AVAILABLE = True
 except ImportError:
     PYGAME_AVAILABLE = False
