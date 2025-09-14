@@ -12,3 +12,4 @@ opencv-python==4.8.1.78
 mido
 pygame
 numpy
+mediapipe
