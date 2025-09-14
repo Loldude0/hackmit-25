@@ -48,7 +48,8 @@ class TextToSuno:
         
         interpretation_prompt = f"""
         Analyze the following text and extract musical parameters for song generation.
-        The text describes someone's current situation, mood, activity, or desired music vibe.
+        The text describes the person's day so far and their mood. Answer in such a way so we are storytelling
+        definetely give a lot of lyrical direction adn try to invlufr smsll and niche thinsg.
         
         Text to analyze:
         "{text}"
@@ -226,7 +227,7 @@ class TextToSuno:
             print(f"🔗 Streaming URL: {result.get('audio_url', 'Not available')}")
             print(f"📁 Metadata: {metadata_file}")
             
-            return result
+            return result.get('downloaded_file', 'Not downloaded')
         else:
             raise Exception(f"Song generation failed: {result.get('error', 'Unknown error')}")
     
@@ -286,23 +287,25 @@ class TextToSuno:
 
 def main():
     """Main function to start the text-to-suno system"""
-    import argparse
+    # import argparse
     
-    parser = argparse.ArgumentParser(description="Text-to-Suno Music Generator")
-    parser.add_argument("--input-file", "-i", default="day_memory.txt", help="Text file to monitor")
-    parser.add_argument("--check-interval", "-c", type=int, default=2, help="File check interval in seconds")
+    # parser = argparse.ArgumentParser(description="Text-to-Suno Music Generator")
+    # parser.add_argument("--input-file", "-i", default="day_memory.txt", help="Text file to monitor")
+    # parser.add_argument("--check-interval", "-c", type=int, default=2, help="File check interval in seconds")
     
-    args = parser.parse_args()
+    # args = parser.parse_args()
     
-    try:
-        processor = TextToSuno(input_file=args.input_file)
-        processor.run_monitor(check_interval=args.check_interval)
+    # try:
+    #     processor = TextToSuno(input_file=args.input_file)
+    #     processor.run_monitor(check_interval=args.check_interval)
         
-    except Exception as e:
-        print(f"❌ Failed to start: {e}")
-        return 1
+    # except Exception as e:
+    #     print(f"❌ Failed to start: {e}")
+    #     return 1
     
-    return 0
+    processor = TextToSuno(input_file="day_memory.txt")
+    return processor.generate_song("day_memory.txt")
+    
 
 if __name__ == "__main__":
     exit(main())
