@@ -1,3 +1,4 @@
+# … your existing imports …
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import welch
@@ -7,8 +8,10 @@ from scipy.spatial.distance import euclidean
 emotions = ['angry','happy','sad']
 data = {e: np.load(f'{e}.npy') for e in emotions}
 
-# 2) PSD via Welch (avg across channels)
-fs = 256                      # replace with your actual sampling rate
+#print shapes
+for e in emotions:
+    print(f"{e:>5}: {data[e].shape}")
+fs = 256
 nperseg = 1024
 freqs, _ = welch(data['angry'], fs, nperseg=nperseg, axis=0)  # just to get freqs
 psd = {}
@@ -35,3 +38,29 @@ plt.legend()
 plt.grid(True, which='both', ls='--')
 plt.tight_layout()
 plt.show()
+
+# 5) windowed band-power features for ML
+from muse2datasample import compute_band_powers  # reuse your function
+
+fs = 256
+window_sec = 2.0
+step_sec   = 1.0
+win_samps  = int(window_sec * fs)
+step_samps = int(step_sec   * fs)
+
+X, y = [], []
+for label, emotion in enumerate(emotions):
+    sig = data[emotion]  # shape (n_samples, n_ch)
+    for start in range(0, sig.shape[0] - win_samps + 1, step_samps):
+        win = sig[start:start+win_samps]
+        # returns (4 bands × n_ch)
+        bp = compute_band_powers(win, fs)
+        X.append(bp.flatten())   # shape (4*n_ch,)
+        y.append(label)
+
+X = np.vstack(X)
+y = np.array(y)
+print("Final feature matrix:", X.shape, "  labels:", y.shape)
+
+np.save('X.npy', X)
+np.save('y.npy', y)
