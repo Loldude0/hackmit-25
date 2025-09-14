@@ -1,0 +1,317 @@
+[
+    {
+      "title": "one of wun",
+      "artist": "Gunna",
+      "description": "Smooth, bouncy trap beat with effortless, confident delivery. High-energy flex anthem, ideal for focused gym sets. Synth-laden but with Atlanta rap swagger at the forefront.",
+      "genre": "Trap, Rap",
+      "tags": ["Confident", "Bouncy", "Modern", "Atlanta", "Flex", "Uplifting"],
+      "youtube": "https://www.youtube.com/watch?v=w_JtBYqMgk8"
+    },
+    {
+      "title": "NEW DROP",
+      "artist": "Don Toliver",
+      "description": "Euphoric trap with wavy hooks, distorted synths and a futuristic, psychedelic vibe. Melodic but bass-heavy, evokes the feel of late-night energy surges or flow state cardio.",
+      "genre": "Trap, Rap, Psychedelic",
+      "tags": ["Futuristic", "Melodic", "Bass-heavy", "Euphoric", "Vibey"],
+      "youtube": "https://www.youtube.com/watch?v=86kPjLvo86M"
+    },
+    {
+      "title": "Ric Flair Drip",
+      "artist": "Offset, Metro Boomin",
+      "description": "Relentless trap banger, metallic high-hats, rapid-fire hi-energetic verses with a larger-than-life attitude. Makes you feel invincible; great for power sets.",
+      "genre": "Trap",
+      "tags": ["Aggressive", "Trap", "Energetic", "Iconic", "Luxury", "Swagger"],
+      "youtube": "https://www.youtube.com/watch?v=QufTQDgSOTE"
+    },
+    {
+      "title": "fukumean",
+      "artist": "Gunna",
+      "description": "Airy, almost psychedelic trap, ultra-modern beat. Gives a feeling of effortless glide, with a cocky lyrical edge—excellent for hitting a cardio climax or pushing past fatigue.",
+      "genre": "Trap, Rap",
+      "tags": ["Psychedelic", "Modern", "Melodic", "Confident", "Floaty"],
+      "youtube": "https://www.youtube.com/watch?v=41F0NccfKqU"
+    },
+    {
+      "title": "TORE UP",
+      "artist": "Don Toliver",
+      "description": "Distorted synths meet spacious trap, glossy vocal layering, and a 'lost in the sauce' atmosphere. Feels both celebratory and reckless, perfect for late-night gym runs.",
+      "genre": "Trap, Rap, Experimental",
+      "tags": ["Distorted", "Atmospheric", "Vocal FX", "Intense", "Experimental"],
+      "youtube": "https://www.youtube.com/watch?v=PvtQwxZJmL8"
+    },
+    {
+      "title": "Ransom",
+      "artist": "Lil Tecca",
+      "description": "Catchy, energetic trap with quirky melody; uplifting and fun, yet maintains intensity. Spirited delivery and memorable hooks—great for quick sprints or circuits.",
+      "genre": "Trap, Rap",
+      "tags": ["Catchy", "Upbeat", "Quirky", "Fun", "Youthful", "Mainstream"],
+      "youtube": "https://www.youtube.com/watch?v=0Cshm-BsiaU"
+    },
+    {
+      "title": "The Box",
+      "artist": "Roddy Ricch",
+      "description": "Memorable, percussive trap anthem. The unique 'eee-err' sound effect and driving bassline make this a modern classic for repetitive lifts or high-rep burnout sets.",
+      "genre": "Trap, Rap",
+      "tags": ["Percussive", "Viral", "Repetitive", "Modern", "Dark", "Intriguing"],
+      "youtube": "https://www.youtube.com/watch?v=61GhT08IZJg"
+    },
+    {
+      "title": "Best of Me",
+      "artist": "NEFFEX",
+      "description": "Aggressive, high-BPM rap-rock with motivational themes. Gritty guitar chords and anthemic chorus for pushing through failure points. Great for resistance training.",
+      "genre": "Rap-Rock, Trap Metal",
+      "tags": ["Motivational", "Aggressive", "Rock-influenced", "Anthemic", "Powerful"],
+      "youtube": "https://www.youtube.com/watch?v=4lIk3Ur8gfQ"
+    },
+    {
+      "title": "Cold",
+      "artist": "NEFFEX",
+      "description": "Gritty rap with a heavy, almost industrial atmosphere. Punchy drums, assertive lyrics, and a raw vibe, perfect for channeling energy at the start of a workout.",
+      "genre": "Trap, Rap Metal",
+      "tags": ["Gritty", "Raw", "High-Energy", "Industrial", "Heavy"],
+      "youtube": "https://www.youtube.com/watch?v=ybKQJZ5QpxE"
+    },
+    {
+      "title": "6 Shots",
+      "artist": "NEFFEX",
+      "description": "Rap-metal fused with dubstep elements, driving and unrelenting beat, lyrics focused on endurance and focus. Gets you into a 'beast mode' state.",
+      "genre": "Rap Metal, Dubstep",
+      "tags": ["Fusion", "Energetic", "Dubstep", "Raw", "Endurance", "Focus"],
+      "youtube": "https://www.youtube.com/watch?v=U3k9e4as1Jc"
+    },
+    {
+        "title": "Quit Playing Games (With My Heart)",
+        "artist": "Backstreet Boys",
+        "description": "A smooth, ultra-melodic 90s pop hit with lush harmonies and a danceable groove. The song’s shimmering production and heartfelt vocals evoke nostalgia and feel-good romance, making it a singalong staple at any party.",
+        "genre": "Pop",
+        "tags": ["90s", "Boy Band", "Melodic", "Nostalgic", "Singalong", "Romantic"],
+        "youtube": "https://www.youtube.com/watch?v=Ug88HO2mg44"
+    },
+    {
+        "title": "Say You'll Be There",
+        "artist": "Spice Girls",
+        "description": "Upbeat pop energy with catchy hooks and a playful, empowering vibe. The sax riff, layered harmonies, and cheeky charisma make it a quintessential girl power anthem and dancefloor starter.",
+        "genre": "Pop",
+        "tags": ["90s", "Girl Group", "Empowering", "Uplifting", "Catchy", "Dance"],
+        "youtube": "https://www.youtube.com/watch?v=54k-7ucmc-0"
+    },
+    {
+        "title": "All Star",
+        "artist": "Smash Mouth",
+        "description": "A punchy, light-hearted pop-rock tune powered by catchy guitar riffs and an instantly memorable chorus. Brings an irreverent, infectious optimism ideal for any gathering that needs a blast of fun and self-confidence.",
+        "genre": "Pop Rock",
+        "tags": ["Fun", "Optimistic", "90s", "Singalong", "Rock Influence", "Feel Good"],
+        "youtube": "https://www.youtube.com/watch?v=ELgr9ClaTe4"
+    },
+    {
+        "title": "Party Rock Anthem",
+        "artist": "LMFAO feat. Lauren Bennett & GoonRock",
+        "description": "An explosive EDM party banger driven by throbbing beats, synth hooks, and a carefree, high-energy atmosphere. Instantly makes crowds move, capturing the essence of a joyful, no-holds-barred night out.",
+        "genre": "Dance-Pop/EDM",
+        "tags": ["Party", "High Energy", "Electronic", "Dance", "Anthem", "2010s"],
+        "youtube": "https://www.youtube.com/watch?v=zIh5AHxh-Ok"
+    },
+    {
+        "title": "Party in the USA",
+        "artist": "Miley Cyrus",
+        "description": "A bright, breezy pop anthem with country touches and a huge, anthemic chorus. It’s about excitement, belonging, and being carefree, making it a go-to song for raising spirits and celebrating good times.",
+        "genre": "Pop",
+        "tags": ["Upbeat", "Anthemic", "2000s", "Feel Good", "Nostalgic", "Dance"],
+        "youtube": "https://www.youtube.com/watch?v=42wRhTyNR90"
+    },
+    {
+        "title": "Uptown Funk",
+        "artist": "Mark Ronson ft. Bruno Mars",
+        "description": "Modern funk with snappy horns, groovy bass, and infectious charisma. This song fuses 80s/90s influences into a dancefloor-dominating track guaranteed to get everyone moving and smiling.",
+        "genre": "Funk Pop",
+        "tags": ["Funk", "Dance", "Throwback", "Catchy", "2010s", "High Energy"],
+        "youtube": "https://www.youtube.com/watch?v=OPf0YbXqDm0"
+    },
+    {
+        "title": "Happy",
+        "artist": "Pharrell Williams",
+        "description": "Pure joy captured in a song. With a handclap groove, soulful vocals, and bouncy melodies, it’s an uplifting track that radiates sunshine and positivity, made for dancing and collective happiness.",
+        "genre": "Soul Pop",
+        "tags": ["Uplifting", "Positive", "2010s", "Singalong", "Dance", "Soulful"],
+        "youtube": "https://www.youtube.com/watch?v=ZbZSe6N_BXs"
+    },
+    {
+        "title": "Shake It Off",
+        "artist": "Taylor Swift",
+        "description": "A vibrant, unstoppable pop anthem with crisp percussion and brass. Its resilient, carefree lyrics and upbeat tempo are perfect for letting loose, celebrating self-confidence, and having fun in a crowd.",
+      "genre": "Pop",
+        "tags": ["Upbeat", "Self-Confidence", "Dance", "Feel Good", "2010s", "Anthem"],
+        "youtube": "https://www.youtube.com/watch?v=y6Sxv-sUYtM"
+    },
+    {
+        "title": "On The Floor",
+        "artist": "Jennifer Lopez ft. Pitbull",
+        "description": "A Latin-infused dance-pop juggernaut featuring pulsing beats and global rhythms. The track oozes confidence and energy, designed to get everyone on their feet in a club or at a party.",
+        "genre": "Dance-Pop/Latin Pop",
+        "tags": ["Party", "Latin", "Dance", "2010s", "Energetic", "Club"],
+        "youtube": "https://www.youtube.com/watch?v=t4H_Zoh7G5A"
+    },
+    {
+        "title": "Say You'll Be There",
+        "artist": "Spice Girls",
+        "description": "A playful and nostalgia-driven pop song, full of attitude and sass. Sax hooks, funky grooves, and group vocals encourage togetherness, making this not just a throwback but a celebration of friendship.",
+      "genre": "Pop",
+        "tags": ["Friendship", "Nostalgic", "Dance", "Girl Power", "90s", "Fun"],
+        "youtube": "https://www.youtube.com/watch?v=54k-7ucmc-0"
+    },
+    {
+      "title": "Look at the Sky",
+      "artist": "Porter Robinson",
+      "description": "Uplifting and radiant electronic pop, with lush synth layers and heartfelt vocals. The feeling is hopeful and powerful without ever being overwhelming, fostering clarity and gentle encouragement.",
+      "genre": "Electronic Pop, EDM",
+      "tags": ["Uplifting", "Hopeful", "Radiant", "Encouraging", "Synth"],
+      "youtube": "https://www.youtube.com/watch?v=HdZwNEU_7hQ&t=89"
+    },
+    {
+      "title": "Something Comforting",
+      "artist": "Porter Robinson",
+      "description": "Soaring melodies and soft piano create a sense of reassurance. Electronic textures and gentle vocals give it a tranquil, cathartic quality, balancing introspection with a hopeful undertone.",
+      "genre": "Electronic Pop",
+      "tags": ["Warm", "Cathartic", "Reassuring", "Piano", "Melodic"],
+      "youtube": "https://www.youtube.com/watch?v=HdZwNEU_7hQ&t=2439"
+    },
+    {
+      "title": "Lifelike",
+      "artist": "Porter Robinson",
+      "description": "A pure, instrumental intro with twinkling piano arpeggios and airy atmosphere, setting a peaceful, gentle mood—ideal for starting work or clearing the mind.",
+      "genre": "Ambient, Instrumental",
+      "tags": ["Gentle", "Innocent", "Piano", "Peaceful", "Intro"],
+      "youtube": "https://www.youtube.com/watch?v=HdZwNEU_7hQ&t=0"
+    },
+    {
+      "title": "Weightless",
+      "artist": "Marconi Union",
+      "description": "Renowned ambient instrumental, designed to induce deep relaxation and focus. Soft waves of synth, subtle atmospheric effects, and very low tempo make it one of the best anti-anxiety tracks.",
+      "genre": "Ambient, Chillout",
+      "tags": ["Ambient", "Relaxing", "Soothing", "Textural", "Instrumental"],
+      "youtube": "https://www.youtube.com/watch?v=UfcAVejslrU"
+    },
+    {
+      "title": "Midnight City",
+      "artist": "M83",
+      "description": "A slow-building, synth-driven pop instrumental with nostalgic, gentle electronic melodies. Maintains a dreamy, atmospheric feel throughout for light focus.",
+      "genre": "Synthpop, Electronic",
+      "tags": ["Nostalgic", "Dreamy", "Spacious", "Bright", "Instrumental"],
+      "youtube": "https://www.youtube.com/watch?v=dX3k_QDnzHE"
+    },
+    {
+        "title": "Get You The Moon",
+        "artist": "Kina feat. Snow",
+        "description": "Laid-back, lo-fi indie pop with soft guitar and a minimalistic, gentle beat. Vocals are tender and understated, perfect for quiet contemplation or gentle background listening.",
+        "genre": "Lo-fi Pop, Indie Pop",
+        "tags": ["Mellow", "Supportive", "Intimate", "Lo-fi", "Gentle"],
+        "youtube": "https://www.youtube.com/watch?v=qnFcVpItds4"
+      },
+      {
+        "title": "Weight of the World (Instrumental Version)",
+        "artist": "Keiichi Okabe",
+        "description": "Orchestral instrumental piece with a peaceful, uplifting feel. Cascading piano and gentle strings create a sense of openness and calm—ideal for serene focus.",
+        "genre": "Soundtrack, Orchestral",
+        "tags": ["Ethereal", "Uplifting", "Motivational", "Orchestral", "Instrumental"],
+        "youtube": "https://www.youtube.com/watch?v=ToBQY630PZE"
+      },
+      {
+        "title": "Photograph",
+        "artist": "Ed Sheeran",
+        "description": "Delicate acoustic pop ballad with a calming tempo, gentle guitar, and hopeful vocal delivery. Evokes warmth, comfort, and positive reflection for a relaxed headspace.",
+        "genre": "Acoustic Pop",
+        "tags": ["Warm", "Gentle", "Hopeful", "Reflective", "Acoustic"],
+        "youtube": "https://www.youtube.com/watch?v=nSDgHBxUbVQ"
+      },
+      {
+        "title": "A Thousand Years",
+        "artist": "Christina Perri",
+        "description": "Soft, heartfelt ballad with slow piano lines, lush strings, and a serene, patient vibe. Calmly uplifting and emotionally open, it's excellent for steady focus or winding down.",
+        "genre": "Pop Ballad",
+        "tags": ["Ethereal", "Sincere", "Tranquil", "Hopeful", "Delicate"],
+        "youtube": "https://www.youtube.com/watch?v=rtOvBOTyX00"
+      },
+        {
+          "title": "All Star",
+          "artist": "Smash Mouth",
+          "description": "Universally recognizable pop anthem with infectious optimism and high-energy, feel-good vibes. Known for its memey association with Shrek, the song radiates playful confidence and is a pop culture phenomenon.",
+          "genre": "Alternative Rock, Pop",
+          "tags": ["Upbeat", "Nostalgic", "Memey", "Feel-Good"],
+          "youtube": "https://www.youtube.com/watch?v=L_jWHffIx5E"
+        },
+        {
+          "title": "Never Gonna Give You Up",
+          "artist": "Rick Astley",
+          "description": "An irresistibly catchy '80s synthpop banger that’s become the ultimate internet meme. Powered by Astley’s deep, smooth vocals and bright, peppy production, it delivers both ironic fun and genuine dancefloor nostalgia.",
+          "genre": "Pop, Dance-Pop",
+          "tags": ["80s", "Viral", "Iconic", "Meme", "Cheesy"],
+          "youtube": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        },
+        {
+          "title": "That's Amore",
+          "artist": "Dean Martin",
+          "description": "Classic crooner tune bursting with Italian romantic flavor and playful kitsch. Swinging orchestration and Martin’s laid-back delivery make it nostalgic and lighthearted—a vintage celebration of love and food.",
+          "genre": "Traditional Pop, Swing",
+          "tags": ["Classic", "Crooner", "Nostalgic", "Comedic", "Italian"],
+          "youtube": "https://www.youtube.com/watch?v=OnFlx2Lnr9Q"
+        },
+        {
+          "title": "Careless Whisper",
+          "artist": "George Michael",
+          "description": "Iconic for its sultry saxophone hook and velvety, dramatic vocals, this smooth jazz-pop hit is a favorite in memes for both sincere and over-the-top romantic moments.",
+          "genre": "Pop, Smooth Jazz",
+          "tags": ["Sexy", "Dramatic", "Memey", "80s", "Smooth"],
+          "youtube": "https://www.youtube.com/watch?v=izGwDsrQ1eQ"
+        },
+        {
+          "title": "My Heart Will Go On",
+          "artist": "Celine Dion",
+          "description": "Epic, lush, and passionately delivered, this Titanic ballad is melodramatic and constantly parodied. Its swelling orchestration and heartfelt vocals make it perfect for both sincere love and meme exaggeration.",
+          "genre": "Pop, Ballad",
+          "tags": ["Epic", "Dramatic", "Classic", "Parody", "90s"],
+          "youtube": "https://youtu.be/p79GmLNLMrY?si=d9NY2pX2FuBAjClf"
+        }
+      ,
+    {
+        "title": "Take On Me",
+        "artist": "A-ha",
+        "description": "A synth-driven love song with a bouncy beat and iconic falsetto, instantly associated with playful internet parodies and unforgettable animated music video visuals.",
+        "genre": "Synthpop, New Wave",
+        "tags": ["Energetic", "Upbeat", "Meme", "80s", "Animated"],
+        "youtube": "https://www.youtube.com/watch?v=djV11Xbc914"
+    },
+    {
+        "title": "Lovecats",
+        "artist": "The Cure",
+        "description": "A jazzy, whimsical New Wave tune with playful melodies and quirky vocals. The feel is bouncy and slightly mischievous—romantic in a cartoonish, fun way.",
+        "genre": "Jazz-Pop, New Wave",
+        "tags": ["Quirky", "Jazzy", "Whimsical", "80s", "Alternative"],
+        "youtube": "https://www.youtube.com/watch?v=mcUza_wWCfA"
+    },
+    {
+        "title": "Hotline Bling",
+        "artist": "Drake",
+        "description": "Contemporary hip-hop love jam infused with ironic internet humor. Mellow, danceable beats pair with meme-ified lyrics and viral dance moves for a modern, playful romance.",
+        "genre": "Hip-Hop, Pop",
+        "tags": ["Modern", "Smooth", "Meme", "Romantic"],
+        "youtube": "https://www.youtube.com/watch?v=uxpDa-c-4Mc"
+    },
+    {
+        "title": "Silly Love Songs",
+        "artist": "Wings (Paul McCartney & Wings)",
+        "description": "Playful, self-aware soft rock classic that pokes fun at love song clichés while being sincerely uplifting. Upbeat horns and layered harmonies give it an infectiously happy, cheeky charm.",
+        "genre": "Pop, Soft Rock",
+        "tags": ["Playful", "Upbeat", "Classic", "Satirical"],
+        "youtube": "https://www.youtube.com/watch?v=ap87QgZKTNw"
+    },
+    {
+        "title": "Almost Blue", 
+        "artist": "Chet Baker",
+        "description": "Beautifully melancholic jazz standard; soft trumpet and breathy vocals evoke tender, bittersweet emotion. Quintessential for romantic, candlelit moments and classic jazz nostalgia.",
+        "genre": "Jazz, Standard",
+        "tags": ["Jazz", "Romantic", "Classic", "Bittersweet", "Smooth"],
+        "youtube": "https://www.youtube.com/watch?v=z4PKzz81m5c"
+    }
+]
+      
+    
