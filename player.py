@@ -49,27 +49,37 @@ class MusicPlayer:
         if not song_path:
             return False
         
+        return self.play_from_path(song_path, start_time=10.0)
+    
+    def play_from_path(self, file_path, start_time=0.0):
+        """Play a song from a specific file path"""
+        file_path = Path(file_path)
+        if not file_path.exists():
+            print(f"❌ File not found: {file_path}")
+            return False
+        
         # Fade out current song if playing
         if self.is_playing:
-            print(f"🔄 Switching to '{song_path.stem}'")
+            print(f"🔄 Switching to '{file_path.stem}'")
             self.fade_volume(0.7, 0.0, 1.0)  # Quick fade out
             pygame.mixer.music.stop()
         
         try:
-            # Load and start new song at 10 seconds
-            pygame.mixer.music.load(str(song_path))
-            pygame.mixer.music.play(start=10.0)
+            # Load and start new song
+            pygame.mixer.music.load(str(file_path))
+            pygame.mixer.music.play(start=start_time)
             
             # Fade in new song
             self.fade_volume(0.0, 0.7, 2.0)
             
-            self.current_song = song_path.stem
+            self.current_song = file_path.stem
             self.is_playing = True
-            print(f"🎵 Playing: {self.current_song} (starting at 10s)")
+            start_msg = f" (starting at {start_time}s)" if start_time > 0 else ""
+            print(f"🎵 Playing: {self.current_song}{start_msg}")
             return True
             
         except Exception as e:
-            print(f"❌ Error: {e}")
+            print(f"❌ Error playing {file_path}: {e}")
             return False
     
     def stop(self):
